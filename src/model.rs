@@ -8,17 +8,17 @@ use schema::messages::dsl::messages as all_messages;
 #[derive(Queryable)]
 pub struct Message {
     pub id: i32,
-    pub title: String,
+    pub content: String,
     pub author: String,
-    pub published: bool,
+    pub sent: bool,
 }
 
 #[derive(Insertable)]
 #[table_name = "messages"]
 pub struct NewMessage {
-    pub title: String,
+    pub content: String,
     pub author: String,
-    pub published: bool,
+    pub sent: bool,
 }
 
 impl Message {
@@ -37,15 +37,15 @@ impl Message {
     }
 
     pub fn update_by_id(id: i32, conn: &PgConnection, Message: NewMessage) -> bool {
-        use schema::messages::dsl::{author as a, published as p, title as t};
+        use schema::messages::dsl::{author as a, sent as p, content as t};
         let NewMessage {
-            title,
+            content,
             author,
-            published,
+            sent,
         } = Message;
 
         diesel::update(all_messages.find(id))
-            .set((a.eq(author), p.eq(published), t.eq(title)))
+            .set((a.eq(author), p.eq(sent), t.eq(content)))
             .get_result::<Message>(conn)
             .is_ok()
     }
